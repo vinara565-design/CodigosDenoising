@@ -28,7 +28,6 @@ niveles de SNR. Resampleado a 16 kHz.
 
 ```
 ├── PARCHE_NA_VAEV2.ipynb          # Notebook principal (entrenamiento + evaluación)
-├── navae_inference_sin_nmf.ipynb  # Notebook de inferencia con mediana espectral
 └── README.md
 ```
 
