@@ -1,2 +1,85 @@
-# CodigosDenoising
-Implementación de Autoencoders (DAE/VAE) para la eliminación de ruido en señales de audio. Este proyecto explora el uso de arquitecturas de Deep Learning para la reconstrucción de voz limpia a partir de señales contaminadas. Desarrollado para la asignatura de Procesado Avanzado de Señales y Datos (UPM).
+# NA-VAE — Speech Enhancement con Autoencoders Variacionales Conscientes del Ruido
+
+Implementación del sistema **Noise-Aware Variational Autoencoder (NA-VAE)** propuesto por [Fang et al. (2021)](https://arxiv.org/abs/2102.08706) para mejora de voz, desarrollada como trabajo de la asignatura **Procesado Avanzado de Señales y Datos** — ETSIT UPM.
+
+---
+
+## Descripción
+
+El sistema aprende la distribución estadística de la voz limpia mediante un VAE y la combina con una estimación no supervisada del ruido (NMF o mediana espectral) en un filtro de Wiener óptimo. El entrenamiento se realiza en dos fases:
+
+- **Fase 1** — VAE estándar entrenado solo con voz limpia. Aprende un prior del espacio latente vocal.
+- **Fase 2** — NA-Encoder entrenado con pares ruidoso/limpio. Aprende a mapear audio ruidoso al mismo espacio latente que el encoder limpio, con el decoder congelado.
+
+## Dataset
+
+[VoiceBank-DEMAND](https://datashare.ed.ac.uk/handle/10283/2791) — 11.572 archivos de entrenamiento (28 hablantes) y 824 de test con ruido ambiental diverso a múltiples niveles de SNR.
+
+## Estructura del repositorio
+
+```
+├── PARCHE_NA_VAEV2.ipynb          # Notebook principal (entrenamiento + evaluación)
+├── navae_inference_sin_nmf.ipynb  # Notebook de inferencia con mediana espectral
+└── README.md
+```
+
+El checkpoint entrenado (`navae_checkpoint_v2.pth`) se almacena en Google Drive por tamaño.
+
+## Hiperparámetros principales
+
+| Parámetro | Valor |
+|---|---|
+| Dimensión latente | 16 |
+| Capas ocultas | 2 × 128, activación Tanh |
+| β (ELBO Fase 1) | 0.01 |
+| Free Bits | 0.2 nats/dim |
+| N_FFT / HOP | 1024 / 256 |
+| Sample rate | 16 kHz |
+| Rango KL óptimo | 0.25–0.60 nats/dim |
+
+## Resultados
+
+| Rango SNR entrada | N audios | Δ SNR medio | Tasa de mejora |
+|---|---|---|---|
+| < 3 dB | 12 | **+1.57 dB** | **100%** |
+| 3–8 dB | 12 | −4.46 dB | 0% |
+| 8–13 dB | 13 | −9.80 dB | 0% |
+| > 13 dB | 13 | −14.12 dB | 0% |
+| **Global** | **50** | **−6.91 dB** | **24%** |
+
+El sistema funciona de forma óptima en condiciones de SNR bajo (< 3 dB), que es el escenario para el que está diseñado.
+
+## Requisitos
+
+```
+torch
+librosa
+numpy
+scipy
+scikit-learn
+soundfile
+matplotlib
+pandas
+```
+
+Instalación:
+```bash
+pip install torch librosa numpy scipy scikit-learn soundfile matplotlib pandas
+```
+
+## Uso rápido (inferencia desde checkpoint)
+
+```python
+import torch
+ckpt = torch.load('navae_checkpoint_v2.pth', map_location='cpu')
+
+# El checkpoint contiene los state_dicts, hiperparámetros y estadísticas de normalización:
+# ckpt['vae_state_dict'], ckpt['na_encoder_state_dict'], ckpt['na_mu_state_dict']
+# ckpt['mean_p'], ckpt['std_p'], ckpt['latent_dim'], ckpt['hidden_dim'], ckpt['sr'] ...
+```
+
+Ver `navae_inference_sin_nmf.ipynb` para el pipeline completo de carga y denoising.
+
+## Referencia
+
+> H. Fang, G. Carbajal, S. Wermter y T. Gerkmann, *"Variational Autoencoder for Speech Enhancement with a Noise-Aware Encoder"*, ICASSP 2021. https://arxiv.org/abs/2102.08706
