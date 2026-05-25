@@ -112,13 +112,13 @@ python
 import torch
 
 ckpt = torch.load('navae_fang2021_v2.pth', map_location='cpu')
-# El checkpoint contiene:
-# ckpt['vae_state_dict']        — pesos del VAE (Fase 1)
-# ckpt['na_encoder_state_dict'] — pesos del NA-Encoder (Fase 2)
-# ckpt['na_mu_state_dict']      — cabeza μ del NA-Encoder
-# ckpt['mean_p'], ckpt['std_p'] — estadísticas de normalización (imprescindibles)
-# ckpt['latent_dim']            — 16
-# ckpt['sr']                    — 16000
+## El checkpoint contiene:
+### ckpt['vae_state_dict']        — pesos del VAE (Fase 1)
+### ckpt['na_encoder_state_dict'] — pesos del NA-Encoder (Fase 2)
+### ckpt['na_mu_state_dict']      — cabeza μ del NA-Encoder
+### ckpt['mean_p'], ckpt['std_p'] — estadísticas de normalización (imprescindibles)
+### ckpt['latent_dim']            — 16
+### ckpt['sr']                    — 16000
 
 
 Ver NA_VAE_Mejorado.ipynb para el pipeline completo de carga y denoising.
