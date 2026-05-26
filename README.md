@@ -28,12 +28,14 @@ niveles de SNR. Resampleado a 16 kHz.
 
 ```
 ├── audio/
+│   ├── p232_019_noisy.mp3
+│   ├── p232_019_navae.mp3
 │   ├── p232_048_noisy.mp3
-│   ├── p232_048_navae_nmf.mp3
+│   ├── p232_048_navae.mp3
 │   ├── p232_028_noisy.mp3
-│   ├── p232_028_navae_nmf.mp3
+│   ├── p232_028_navae.mp3
 │   ├── p232_040_noisy.mp3
-│   └── p232_040_navae_nmf.mp3
+│   └── p232_040_navae.mp3
 ├── PARCHE_NA_VAEV2.ipynb          # Notebook principal (entrenamiento + evaluación)
 └── README.md
 ```
